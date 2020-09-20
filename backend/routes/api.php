@@ -14,16 +14,32 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/*############################## START AUTHENTICATION USER #################################*/
+
 Route::group(['prefix' => '/auth', ['middleware'=>'throttle:20,5']], function () {
     Route::group(['namespace' => 'Api\Auth'], function () {
-        Route::post('/register', 'RegisterController@register');
+        Route::post('/register', 'RegisterController@register'); //New user registration with fixed options
         Route::post('/login', 'LoginController@login');
-        
     });
 });
-Route::group(['middleware'=>'jwt.auth'], function () {
-    Route::group(['namespace' => 'Api'], function () {
-        Route::get('/my', 'MyController@index');
-        Route::get('/auth/logout', 'MyController@logout');
+
+
+/*############################## END AUTHENTICATION USERS #################################*/
+
+/*############################## START Dashboard  #################################*/
+Route::group(['middleware'=> ['jwt.auth', 'can:administration']], function () {
+    Route::group(['namespace' => 'Api\Dashboard\Users'], function () {
+        Route::get('/admin-panel', 'usersController@homePage');
+        Route::post('/add/user', 'addController@register');//Only an admin can add the user with options
+        Route::get('/users', 'usersController@store');
+        Route::post('/update/user/{userId}', 'usersController@update');
+        Route::delete('/delete/user/{userId}', 'usersController@destroy')->name('company.destroy');
+
+        Route::get('/logout', 'usersController@logout');
     });
 });
+
+
+
+/*############################## END Dashboard #################################*/
+

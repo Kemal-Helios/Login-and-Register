@@ -10,7 +10,7 @@ trait GeneralTrait
         return app()->getLocale();
     }
 
-    public function returnError($errNum, $val_err, $msg, $statusNum)
+    public function returnError($errNum, $val_err, $msg, $statusNum = '')
     {
         //v1.1
         return response()->json([
@@ -29,7 +29,7 @@ trait GeneralTrait
     }
 
 
-    public function returnSuccessMessage($msg = "", $errNum = "S000")
+    public function returnSuccessMessage($errNum = "S000", $msg = "")
     {
         return [
             'status' => true,
@@ -38,26 +38,26 @@ trait GeneralTrait
         ];
     }
 
-    public function returnData($keyData, $data ,$key, $value, $msg = "")
+    public function returnData($keyData, $data , $msg = "")
     {
-        //v1.1
-        return response()->json([
-        'status' => true,
-        'errNum' => "S000",
-        'msg' => $msg,
-        $keyData => $data,
-        $key => $value
-    ]);
-        
-        /*v1.0
         return response()->json([
             'status' => true,
             'errNum' => "S000",
             'msg' => $msg,
-            $key => $value
-        ]);*/
+            $keyData => $data
+        ]);
     }
 
+    public function returnDataWithToken($keyData, $data ,$keyToken, $token, $msg = "", $statusNum = 200)
+    {
+        return response()->json([
+            'status' => true,
+            'errNum' => "S000",
+            'msg' => $msg,
+            $keyData => $data,
+            $keyToken => $token
+        ],$statusNum);
+    }
 
     //////////////////
     public function returnValidationError($code = "E001", $validator)

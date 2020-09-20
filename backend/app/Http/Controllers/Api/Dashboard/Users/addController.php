@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Auth;
+namespace App\Http\Controllers\Api\Dashboard\Users;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use App\Traits\GeneralTrait;
 
 
-class RegisterController extends Controller
+class addController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
@@ -64,7 +64,7 @@ class RegisterController extends Controller
         if (!$validator->fails()) {
             $user = $this->create($request->all());
             $token = JWTAuth::attempt($request->only('email', 'password'));
-            return $this-> returnDataWithToken('user_data',$user,'token',$token ,"Saccess");
+            return $this-> returnDataWithToken('user_data',$user,'token',$token ,"Added successfully");
             
         }
        return $this->returnError('E422',$validator->errors(),'Error Register',422);
@@ -87,7 +87,8 @@ class RegisterController extends Controller
             'country_code' => ['required', 'string', 'max:5'],
             'mobile' => ['required', 'string', 'max:11','unique:users'],
             'discount_code' => ['required', 'string', 'max:25'],
-           
+            'status' => ['required', 'string', 'max:25'],
+            'role' => ['required', 'string'],
             
             //, 'confirmed' // for password'
         ]);
@@ -109,10 +110,10 @@ class RegisterController extends Controller
             'country_code' => $data['country_code'],
             'mobile' => $data['mobile'],
             'discount_code' => $data['discount_code'],
-            'status' => 'Inactive',
+            'status' => $data['status'],
             
         ]);
-        $role = Role::select('id')->where('name', 'client')->first();
+        $role = Role::select('id')->where('name', ['name' => $data['role']])->first();
         $user->roles()->attach($role);
         return $user;
     }
